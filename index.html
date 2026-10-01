@@ -1,0 +1,1871 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledger Text → Excel</title>
+
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:light-dark(#f5f7fb,#0e1117);
+  --panel:light-dark(#fff,#151a22);
+  --panel2:light-dark(#f8fafc,#1b222d);
+  --text:light-dark(#111827,#f4f7fb);
+  --muted:light-dark(#667085,#a8b1c0);
+  --line:light-dark(#dfe4ec,#303947);
+  --accent:light-dark(#315efb,#7c9cff);
+  --accent2:light-dark(#eaf0ff,#202c50);
+  --danger:light-dark(#c62828,#ff7c7c);
+  --good:light-dark(#16794a,#59d99a)
+}
+
+*{
+  box-sizing:border-box
+}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text)
+}
+
+#app{
+  min-height:100vh;
+  background:var(--bg)
+}
+
+.wrap{
+  max-width:1180px;
+  margin:auto;
+  padding:28px 22px 48px
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-end;
+  margin-bottom:24px
+}
+
+.eyebrow{
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--accent)
+}
+
+h1{
+  font-size:30px;
+  line-height:1.1;
+  margin:7px 0
+}
+
+.sub{
+  color:var(--muted);
+  margin:0;
+  max-width:760px
+}
+
+.pill{
+  border:1px solid var(--line);
+  background:var(--panel);
+  border-radius:999px;
+  padding:8px 12px;
+  color:var(--muted);
+  font-size:12px;
+  white-space:nowrap
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:390px 1fr;
+  gap:18px
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.04);
+  padding:18px
+}
+
+.card h2{
+  font-size:16px;
+  margin:0 0 5px
+}
+
+.hint{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.5
+}
+
+.controls{
+  display:grid;
+  gap:12px;
+  margin-top:15px
+}
+
+label{
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted)
+}
+
+select,
+input,
+textarea,
+button{
+  font:inherit
+}
+
+select,
+input[type=text],
+input[type=number]{
+  width:100%;
+  margin-top:6px;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  border-radius:10px;
+  padding:10px 11px;
+  outline:none
+}
+
+select:focus,
+input:focus,
+textarea:focus{
+  border-color:var(--accent)
+}
+
+textarea{
+  width:100%;
+  height:430px;
+  resize:vertical;
+  margin-top:8px;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  border-radius:12px;
+  padding:13px;
+  line-height:1.45;
+  outline:none
+}
+
+.btnrow{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin-top:12px
+}
+
+button{
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  border-radius:10px;
+  padding:10px 13px;
+  font-weight:750;
+  cursor:pointer
+}
+
+button:hover{
+  filter:brightness(.98)
+}
+
+button.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:white
+}
+
+button.danger{
+  color:var(--danger)
+}
+
+button.small{
+  padding:7px 9px;
+  font-size:12px
+}
+
+.options{
+  display:grid;
+  gap:9px;
+  margin-top:16px
+}
+
+.check{
+  display:flex;
+  gap:9px;
+  align-items:center;
+  font-size:13px
+}
+
+.check input{
+  width:auto;
+  margin:0
+}
+
+.notice{
+  margin-top:13px;
+  padding:10px 12px;
+  border-radius:10px;
+  background:var(--accent2);
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45
+}
+
+.notice strong{
+  color:var(--text)
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin:15px 0
+}
+
+.stat{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px
+}
+
+.stat .k{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  font-weight:800;
+  letter-spacing:.06em
+}
+
+.stat .v{
+  font-size:19px;
+  font-weight:850;
+  margin-top:4px
+}
+
+.good{
+  color:var(--good)
+}
+
+.bad{
+  color:var(--danger)
+}
+
+.tablewrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:12px
+}
+
+.tablewrap table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:760px
+}
+
+.tablewrap th{
+  position:sticky;
+  top:0;
+  background:var(--panel2);
+  text-align:left;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--muted);
+  padding:10px;
+  border-bottom:1px solid var(--line)
+}
+
+.tablewrap td{
+  padding:6px 8px;
+  border-bottom:1px solid var(--line);
+  vertical-align:middle
+}
+
+.tablewrap tr:last-child td{
+  border-bottom:0
+}
+
+.cell{
+  border:1px solid transparent;
+  background:transparent;
+  color:var(--text);
+  padding:7px;
+  width:100%;
+  border-radius:7px
+}
+
+.cell:focus{
+  border-color:var(--accent);
+  background:var(--panel2)
+}
+
+.num{
+  font-variant-numeric:tabular-nums;
+  text-align:right
+}
+
+.actions{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  margin:14px 0 10px
+}
+
+.empty{
+  padding:42px 20px;
+  text-align:center;
+  color:var(--muted)
+}
+
+.footerhint{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:12px
+}
+
+.target{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:end;
+  margin-top:12px
+}
+
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:1fr
+  }
+
+  .top{
+    align-items:flex-start;
+    flex-direction:column
+  }
+
+  .stats{
+    grid-template-columns:1fr
+  }
+
+  .wrap{
+    padding:20px 14px 36px
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<div class="wrap">
+
+<div class="top">
+
+<div>
+<div class="eyebrow">Ledger text cleaner</div>
+
+<h1>
+Paste → detect → edit → Excel
+</h1>
+
+<p class="sub">
+Turn messy bank / ledger text into a clean
+DATE · PARTICULARS · PAYMENT · RECEIPTS · BALANCE table.
+</p>
+</div>
+
+<div class="pill">
+No watermark · local processing
+</div>
+
+</div>
+
+
+<div class="grid">
+
+
+<section class="card">
+
+<h2>1. Paste your text</h2>
+
+<div class="hint">
+One transaction per line works best. The parser looks for a date first,
+then the description, then the final three numeric values as payment,
+receipt and balance.
+</div>
+
+
+<textarea
+id="source"
+placeholder="Paste your bank / ledger text here..."
+>01FEB      PICK ME         100,000.00       00.00    100,000
+03FEB      RENT              00.00           600,000    1,600,000.00
+27FEB      WAGES           300,000         00.00          1,250,000.00</textarea>
+
+
+<div class="controls">
+
+<label>
+
+Date format
+
+<select id="dateFormat">
+
+<option value="DDMMMYY">
+01FEB25
+</option>
+
+<option value="DDMMM">
+01FEB
+</option>
+
+<option value="DD/MM/YYYY">
+01/02/2025
+</option>
+
+<option value="DD-MM-YYYY">
+01-02-2025
+</option>
+
+<option value="YYYY-MM-DD">
+2025-02-01
+</option>
+
+</select>
+
+</label>
+
+</div>
+
+
+<div class="btnrow">
+
+<button
+class="primary"
+id="detect">
+Detect transactions
+</button>
+
+<button id="sample">
+Load sample
+</button>
+
+<button
+id="clear"
+class="danger">
+Clear
+</button>
+
+</div>
+
+
+<div class="options">
+
+<label class="check">
+
+<input
+type="checkbox"
+id="totals"
+checked>
+
+Show totals + net profit in exported sheet
+
+</label>
+
+
+<label class="check">
+
+<input
+type="checkbox"
+id="carry">
+
+Recalculate balance from the first balance using each row's net movement
+
+</label>
+
+</div>
+
+
+<div class="target">
+
+<div>
+
+<label>
+Minimum net profit target
+</label>
+
+<input
+id="target"
+type="number"
+min="0"
+step="0.01"
+value="600000">
+
+</div>
+
+<button id="analyze">
+Analyze
+</button>
+
+</div>
+
+
+<div class="notice">
+
+<strong>Important:</strong>
+
+Detected financial figures are kept as entered.
+The app can show the gap to a target, but it does not silently
+alter accounting records to manufacture a target profit.
+Any legitimate adjustment should be entered transparently
+in the editable table.
+
+</div>
+
+</section>
+
+
+
+<section class="card">
+
+
+<div class="actions">
+
+<div>
+
+<h2>
+2. Preview & edit
+</h2>
+
+<div
+class="hint"
+id="rowHint">
+
+No transactions detected yet.
+
+</div>
+
+</div>
+
+
+<button
+class="primary"
+id="download"
+disabled>
+
+Download Excel
+
+</button>
+
+</div>
+
+
+<div class="stats">
+
+
+<div class="stat">
+
+<div class="k">
+Total payments
+</div>
+
+<div
+class="v"
+id="sumPay">
+
+0.00
+
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="k">
+Total receipts
+</div>
+
+<div
+class="v"
+id="sumRec">
+
+0.00
+
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="k">
+Net profit
+</div>
+
+<div
+class="v"
+id="profit">
+
+0.00
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div
+id="targetMsg"
+class="notice"
+style="display:none">
+</div>
+
+
+<div class="tablewrap">
+
+<div id="table">
+
+<div class="empty">
+
+Paste text on the left, then click
+<strong>Detect transactions</strong>.
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="footerhint">
+
+You can change the date format at any time.
+Editing a cell immediately updates the totals.
+Excel export contains the visible table and,
+if enabled, a totals section.
+
+</div>
+
+</section>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const state={
+rows:[]
+};
+
+const $=id=>document.getElementById(id);
+
+
+const money=n=>
+Number.isFinite(n)
+?
+n.toLocaleString(
+undefined,
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+)
+:
+'0.00';
+
+
+function parseMoney(s){
+
+if(!s)return 0;
+
+let neg=
+/^\(.*\)$/.test(s.trim()) ||
+/-$/.test(s.trim());
+
+let x=
+s
+.replace(/[(),\s]/g,'')
+.replace(/CR|DR/gi,'');
+
+let n=parseFloat(x);
+
+return neg
+?
+-Math.abs(n)
+:
+n||0;
+
+}
+
+
+function dateMatch(s){
+
+return
+/^\d{1,2}[A-Za-z]{3}(?:\d{2}|\d{4})?$/.test(s)
+||
+/^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/.test(s)
+||
+/^\d{4}-\d{1,2}-\d{1,2}$/.test(s);
+
+}
+
+
+function formatDate(raw){
+
+const f=$("dateFormat").value;
+
+let d=raw.trim().toUpperCase();
+
+let day,mon,yr;
+
+
+if(
+/^\d{1,2}[A-Z]{3}(?:\d{2}|\d{4})?$/.test(d)
+){
+
+let m=d.match(
+/^(\d{1,2})([A-Z]{3})(\d{2}|\d{4})?$/
+);
+
+day=m[1].padStart(2,'0');
+
+mon=m[2];
+
+yr=m[3]||'';
+
+
+if(f==='DDMMM')
+return day+mon;
+
+
+if(f==='DDMMMYY')
+return day+mon+(yr?yr.slice(-2):'');
+
+
+let mi=[
+'JAN',
+'FEB',
+'MAR',
+'APR',
+'MAY',
+'JUN',
+'JUL',
+'AUG',
+'SEP',
+'OCT',
+'NOV',
+'DEC'
+].indexOf(mon)+1;
+
+
+yr=yr?
+(
+yr.length===2
+?
+'20'+yr
+:
+yr
+)
+:
+new Date().getFullYear();
+
+
+if(f==='DD/MM/YYYY')
+return day+'/'+String(mi).padStart(2,'0')+'/'+yr;
+
+
+if(f==='DD-MM-YYYY')
+return day+'-'+String(mi).padStart(2,'0')+'-'+yr;
+
+
+if(f==='YYYY-MM-DD')
+return yr+'-'+String(mi).padStart(2,'0')+'-'+day;
+
+}
+
+
+return d;
+
+}
+
+
+function parseLine(line){
+
+let clean=line.trim();
+
+if(!clean)
+return null;
+
+let tokens=clean.split(/\s+/);
+
+let di=tokens.findIndex(dateMatch);
+
+if(di<0)
+return null;
+
+
+let date=formatDate(tokens[di]);
+
+let after=tokens.slice(di+1);
+
+let nums=[];
+
+
+for(
+let i=after.length-1;
+i>=0;
+i--
+){
+
+if(
+/^\(?[+-]?[\d,]+(?:\.\d+)?\)?(?:CR|DR)?$/i.test(after[i])
+){
+
+nums.unshift(after[i]);
+
+}
+
+else if(nums.length>=3){
+
+break;
+
+}
+
+}
+
+
+if(nums.length<3)
+return null;
+
+
+let start=
+after.length-nums.length;
+
+
+let desc=
+after
+.slice(0,start)
+.join(' ')
+.replace(/\s{2,}/g,' ')
+.trim();
+
+
+return{
+
+date,
+
+description:
+desc||'—',
+
+payment:
+parseMoney(nums[0]),
+
+receipt:
+parseMoney(nums[1]),
+
+balance:
+parseMoney(nums[2])
+
+};
+
+}
+
+
+function detect(){
+
+let lines=
+$("source")
+.value
+.split(/\r?\n/);
+
+let out=[];
+
+
+for(
+const line
+of lines
+){
+
+let r=parseLine(line);
+
+if(r)
+out.push(r);
+
+}
+
+
+state.rows=out;
+
+render();
+
+}
+
+
+function esc(s){
+
+return String(s)
+
+.replace(/&/g,'&amp;')
+.replace(/"/g,'&quot;')
+.replace(/</g,'&lt;')
+.replace(/>/g,'&gt;');
+
+}
+
+
+function render(){
+
+let t=$("table");
+
+
+$("rowHint").textContent=
+
+state.rows.length
+?
+`${state.rows.length} transaction${state.rows.length===1?'':'s'} detected · click any cell to edit.`
+:
+'No transactions detected.';
+
+
+$("download").disabled=
+!state.rows.length;
+
+
+if(!state.rows.length){
+
+t.innerHTML=
+'<div class="empty">No rows detected. Check that each transaction has a recognizable date and three numeric values.</div>';
+
+updateStats();
+
+return;
+
+}
+
+
+let html=
+'<table><thead><tr>' +
+
+'<th>Date</th>' +
+
+'<th>Particulars</th>' +
+
+'<th>Payment</th>' +
+
+'<th>Receipts</th>' +
+
+'<th>Balance</th>' +
+
+'<th></th>' +
+
+'</tr></thead><tbody>';
+
+
+state.rows.forEach(
+(r,i)=>{
+
+html+=`
+
+<tr>
+
+<td>
+
+<input
+class="cell"
+value="${esc(r.date)}"
+data-i="${i}"
+data-k="date">
+
+</td>
+
+
+<td>
+
+<input
+class="cell"
+value="${esc(r.description)}"
+data-i="${i}"
+data-k="description">
+
+</td>
+
+
+<td>
+
+<input
+class="cell num"
+value="${money(r.payment)}"
+data-i="${i}"
+data-k="payment">
+
+</td>
+
+
+<td>
+
+<input
+class="cell num"
+value="${money(r.receipt)}"
+data-i="${i}"
+data-k="receipt">
+
+</td>
+
+
+<td>
+
+<input
+class="cell num"
+value="${money(r.balance)}"
+data-i="${i}"
+data-k="balance">
+
+</td>
+
+
+<td>
+
+<button
+class="small danger del"
+data-i="${i}">
+
+×
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+
+html+='</tbody></table>';
+
+t.innerHTML=html;
+
+
+t.querySelectorAll('.cell')
+.forEach(
+el=>
+
+el.addEventListener(
+'change',
+()=>{
+
+let i=+el.dataset.i;
+
+let k=el.dataset.k;
+
+
+state.rows[i][k]=
+
+(
+k==='payment' ||
+k==='receipt' ||
+k==='balance'
+)
+
+?
+
+parseMoney(el.value)
+
+:
+
+el.value;
+
+
+render();
+
+}
+
+)
+
+);
+
+
+t.querySelectorAll('.del')
+.forEach(
+b=>
+
+b.onclick=()=>{
+
+state.rows.splice(
++b.dataset.i,
+1
+);
+
+render();
+
+}
+
+);
+
+
+updateStats();
+
+}
+
+
+function updateStats(){
+
+let p=
+state.rows.reduce(
+(a,r)=>a+Number(r.payment||0),
+0
+);
+
+
+let rec=
+state.rows.reduce(
+(a,r)=>a+Number(r.receipt||0),
+0
+);
+
+
+let net=rec-p;
+
+
+$("sumPay").textContent=
+money(p);
+
+$("sumRec").textContent=
+money(rec);
+
+$("profit").textContent=
+money(net);
+
+
+$("profit").className=
+'v '+
+(
+net>=Number($("target").value||0)
+?
+'good'
+:
+'bad'
+);
+
+}
+
+
+function analyze(){
+
+let p=
+state.rows.reduce(
+(a,r)=>a+r.payment,
+0
+);
+
+
+let rec=
+state.rows.reduce(
+(a,r)=>a+r.receipt,
+0
+);
+
+
+let net=rec-p;
+
+let target=
+Number(
+$("target").value||0
+);
+
+let gap=
+target-net;
+
+let m=
+$("targetMsg");
+
+
+m.style.display='block';
+
+
+if(gap<=0){
+
+m.innerHTML=
+`<strong>Target met.</strong>
+Current net profit is ${money(net)},
+which is ${money(net-target)}
+above the ${money(target)} target.`;
+
+}
+
+else{
+
+m.innerHTML=
+`<strong>Target gap:</strong>
+${money(gap)}.
+Current net profit is ${money(net)}.
+If an adjustment is genuinely required,
+enter the documented adjustment in the editable
+table rather than changing source figures without support.`;
+
+}
+
+}
+
+
+function sample(){
+
+$("source").value=
+`01FEB      PICK ME         100,000.00       00.00    100,000
+03FEB      RENT              00.00           600,000    1,600,000.00
+27FEB      WAGES           300,000         00.00          1,250,000.00`;
+
+detect();
+
+}
+
+
+$("detect").onclick=detect;
+
+$("sample").onclick=sample;
+
+
+$("clear").onclick=()=>{
+
+$("source").value='';
+
+state.rows=[];
+
+render();
+
+};
+
+
+$("analyze").onclick=analyze;
+
+
+$("target").oninput=updateStats;
+
+
+$("dateFormat").onchange=()=>{
+
+state.rows.forEach(
+r=>
+r.date=formatDate(r.date)
+);
+
+render();
+
+};
+
+
+function crc32(buf){
+
+let c=~0;
+
+for(
+let i=0;
+i<buf.length;
+i++
+){
+
+c^=buf[i];
+
+for(
+let k=0;
+k<8;
+k++
+){
+
+c=
+(c>>>1)
+^
+(
+(c&1)
+?
+0xEDB88320
+:
+0
+);
+
+}
+
+}
+
+return(~c)>>>0;
+
+}
+
+
+function u16(n){
+
+return new Uint8Array([
+n&255,
+(n>>>8)&255
+]);
+
+}
+
+
+function u32(n){
+
+return new Uint8Array([
+n&255,
+(n>>>8)&255,
+(n>>>16)&255,
+(n>>>24)&255
+]);
+
+}
+
+
+function concat(arrs){
+
+let n=
+arrs.reduce(
+(s,a)=>s+a.length,
+0
+);
+
+let o=
+new Uint8Array(n);
+
+let p=0;
+
+arrs.forEach(
+a=>{
+o.set(a,p);
+p+=a.length;
+}
+);
+
+return o;
+
+}
+
+
+const te=
+new TextEncoder();
+
+
+function zip(files){
+
+let parts=[];
+
+let central=[];
+
+let offset=0;
+
+
+for(
+const [name,text]
+of files
+){
+
+let data=
+te.encode(text);
+
+let nb=
+te.encode(name);
+
+let crc=
+crc32(data);
+
+
+let local=
+concat([
+
+new Uint8Array([
+80,75,3,4,
+20,0,
+0,0,
+0,0,
+0,0,
+0,0
+]),
+
+u32(crc),
+
+u32(data.length),
+
+u32(data.length),
+
+u16(nb.length),
+
+u16(0),
+
+nb,
+
+data
+
+]);
+
+
+parts.push(local);
+
+
+central.push(
+concat([
+
+new Uint8Array([
+80,75,1,2,
+20,0,
+20,0,
+0,0,
+0,0,
+0,0
+]),
+
+u32(crc),
+
+u32(data.length),
+
+u32(data.length),
+
+u16(nb.length),
+
+u16(0),
+
+u16(0),
+
+u16(0),
+
+u16(0),
+
+u32(0),
+
+u32(offset),
+
+nb
+
+])
+);
+
+
+offset+=local.length;
+
+}
+
+
+let cd=
+concat(central);
+
+let body=
+concat(parts);
+
+
+let end=
+concat([
+
+new Uint8Array([
+80,75,5,6,
+0,0,
+0,0
+]),
+
+u16(files.length),
+
+u16(files.length),
+
+u32(cd.length),
+
+u32(body.length),
+
+u16(0)
+
+]);
+
+
+return new Blob(
+[
+concat([
+body,
+cd,
+end
+])
+],
+{
+type:
+'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+}
+);
+
+}
+
+
+function xmlEsc(s){
+
+return String(s)
+
+.replace(/&/g,'&amp;')
+.replace(/</g,'&lt;')
+.replace(/>/g,'&gt;')
+.replace(/"/g,'&quot;')
+.replace(/'/g,'&apos;');
+
+}
+
+
+function cell(v,type){
+
+if(type==='n')
+
+return `<c t="n"><v>${Number(v)||0}</v></c>`;
+
+return `<c t="inlineStr"><is><t>${xmlEsc(v)}</t></is></c>`;
+
+}
+
+
+function downloadXlsx(){
+
+if(!state.rows.length)
+return;
+
+
+let rows=[
+
+[
+'DATE',
+'PARTICULARS',
+'PAYMENT',
+'RECEIPTS',
+'BALANCE'
+],
+
+...state.rows.map(
+r=>[
+r.date,
+r.description,
+r.payment,
+r.receipt,
+r.balance
+]
+)
+
+];
+
+
+if($("totals").checked){
+
+let p=
+state.rows.reduce(
+(a,r)=>a+r.payment,
+0
+);
+
+let rec=
+state.rows.reduce(
+(a,r)=>a+r.receipt,
+0
+);
+
+
+rows.push([
+'',
+'',
+'',
+'',
+''
+]);
+
+
+rows.push([
+'',
+'TOTAL PAYMENTS',
+p,
+'',
+''
+]);
+
+
+rows.push([
+'',
+'TOTAL RECEIPTS',
+'',
+rec,
+''
+]);
+
+
+rows.push([
+'',
+'NET PROFIT',
+'',
+rec-p,
+''
+]);
+
+}
+
+
+let sheet=
+rows
+.map(
+(r,i)=>
+`<row r="${i+1}">${
+r.map(
+(v,j)=>
+cell(
+v,
+(typeof v==='number')
+?
+'n'
+:
+'s'
+)
+).join('')
+}</row>`
+)
+.join('');
+
+
+let files=[
+
+[
+'[Content_Types].xml',
+
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+
+<Default Extension="xml" ContentType="application/xml"/>
+
+<Override
+PartName="/xl/workbook.xml"
+ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+
+<Override
+PartName="/xl/worksheets/sheet1.xml"
+ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+
+<Override
+PartName="/xl/styles.xml"
+ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
+
+</Types>`
+
+],
+
+
+[
+
+'_rels/.rels',
+
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<Relationships
+xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+
+<Relationship
+Id="rId1"
+Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+Target="xl/workbook.xml"/>
+
+</Relationships>`
+
+],
+
+
+[
+
+'xl/workbook.xml',
+
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<workbook
+xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+
+<sheets>
+
+<sheet
+name="Transactions"
+sheetId="1"
+r:id="rId1"/>
+
+</sheets>
+
+</workbook>`
+
+],
+
+
+[
+
+'xl/_rels/workbook.xml.rels',
+
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<Relationships
+xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+
+<Relationship
+Id="rId1"
+Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"
+Target="worksheets/sheet1.xml"/>
+
+<Relationship
+Id="rId2"
+Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"
+Target="styles.xml"/>
+
+</Relationships>`
+
+],
+
+
+[
+
+'xl/styles.xml',
+
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<styleSheet
+xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+
+<fonts count="1">
+
+<font>
+
+<sz val="11"/>
+
+<name val="Calibri"/>
+
+</font>
+
+</fonts>
+
+<fills count="2">
+
+<fill>
+
+<patternFill patternType="none"/>
+
+</fill>
+
+<fill>
+
+<patternFill patternType="gray125"/>
+
+</fill>
+
+</fills>
+
+<borders count="1">
+
+<border>
+
+<left/>
+
+<right/>
+
+<top/>
+
+<bottom/>
+
+<diagonal/>
+
+</border>
+
+</borders>
+
+<cellStyleXfs count="1">
+
+<xf
+numFmtId="0"
+fontId="0"
+fillId="0"
+borderId="0"/>
+
+</cellStyleXfs>
+
+<cellXfs count="1">
+
+<xf
+numFmtId="0"
+fontId="0"
+fillId="0"
+borderId="0"/>
+
+</cellXfs>
+
+</styleSheet>`
+
+],
+
+
+[
+
+'xl/worksheets/sheet1.xml',
+
+`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<worksheet
+xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+
+<sheetData>
+
+${sheet}
+
+</sheetData>
+
+</worksheet>`
+
+]
+
+];
+
+
+let blob=
+zip(files);
+
+let a=
+document.createElement('a');
+
+a.href=
+URL.createObjectURL(blob);
+
+a.download=
+'transactions_cleaned.xlsx';
+
+a.click();
+
+
+setTimeout(
+()=>
+URL.revokeObjectURL(a.href),
+1000
+);
+
+}
+
+
+$("download").onclick=
+downloadXlsx;
+
+
+sample();
+
+</script>
+
+</body>
+</html>
