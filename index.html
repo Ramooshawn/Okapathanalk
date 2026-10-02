@@ -3,364 +3,360 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Okapathana — Ledger to Excel</title>
+<title>Okapathana — Bank Statement Cleaner</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+
+:root{
+  --bg:#f4f6f9;
+  --card:#fff;
+  --text:#172033;
+  --muted:#687386;
+  --border:#dce2ea;
+  --primary:#315efb;
+  --primary-dark:#2449cc;
+  --success:#16834d;
+  --danger:#c62828;
+  --warning:#9a6700;
 }
 
-:root {
-  --bg: #f5f7fb;
-  --card: #ffffff;
-  --text: #172033;
-  --muted: #697386;
-  --border: #dfe4ec;
-  --primary: #315efb;
-  --primary-dark: #244bd0;
-  --soft: #eef2ff;
-  --danger: #c62828;
-  --success: #16834d;
-  --warning: #9a6700;
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
 }
 
-body {
-  margin: 0;
-  font-family:
-    Inter,
-    Arial,
-    Helvetica,
-    sans-serif;
-  background: var(--bg);
-  color: var(--text);
+.container{
+  width:min(1250px,calc(100% - 28px));
+  margin:auto;
+  padding:30px 0 60px;
 }
 
-.container {
-  width: min(1200px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 32px 0 50px;
+.header{
+  margin-bottom:22px;
 }
 
-.header {
-  margin-bottom: 24px;
+.badge{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:20px;
+  background:#eaf0ff;
+  color:var(--primary);
+  font-size:11px;
+  font-weight:bold;
+  letter-spacing:.08em;
 }
 
-.badge {
-  display: inline-block;
-  background: var(--soft);
-  color: var(--primary);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  padding: 7px 10px;
-  border-radius: 20px;
-  text-transform: uppercase;
+h1{
+  margin:9px 0 5px;
+  font-size:30px;
 }
 
-h1 {
-  margin: 10px 0 7px;
-  font-size: 32px;
+.subtitle{
+  color:var(--muted);
+  margin:0;
+  font-size:14px;
 }
 
-.subtitle {
-  margin: 0;
-  color: var(--muted);
-  font-size: 15px;
+.layout{
+  display:grid;
+  grid-template-columns:390px 1fr;
+  gap:18px;
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 20px;
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:18px;
+  box-shadow:0 7px 25px rgba(20,30,50,.05);
 }
 
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 8px 25px rgba(20, 30, 50, 0.05);
+.card h2{
+  margin:0 0 6px;
+  font-size:18px;
 }
 
-.card h2 {
-  margin: 0 0 6px;
-  font-size: 18px;
+.help{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.55;
 }
 
-.help {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-textarea {
-  width: 100%;
-  height: 390px;
-  margin-top: 15px;
-  padding: 13px;
-  border: 1px solid var(--border);
-  border-radius: 11px;
-  resize: vertical;
-  font-family: Consolas, monospace;
-  font-size: 13px;
-  line-height: 1.55;
-  outline: none;
+textarea{
+  width:100%;
+  min-height:430px;
+  margin-top:14px;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  resize:vertical;
+  font-family:Consolas,monospace;
+  font-size:12px;
+  line-height:1.5;
+  outline:none;
 }
 
 textarea:focus,
 input:focus,
-select:focus {
-  border-color: var(--primary);
+select:focus{
+  border-color:var(--primary);
 }
 
-.field {
-  margin-top: 15px;
+.field{
+  margin-top:14px;
 }
 
-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--muted);
-  margin-bottom: 6px;
+label{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:bold;
+  margin-bottom:6px;
+  text-transform:uppercase;
 }
 
 select,
 input[type="number"],
-input[type="text"] {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  padding: 10px;
-  background: #fff;
-  color: var(--text);
-  outline: none;
+input[type="text"]{
+  width:100%;
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  outline:none;
 }
 
-.button-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 13px;
+.button-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
 }
 
-button {
-  border: 1px solid var(--border);
-  background: white;
-  color: var(--text);
-  padding: 10px 13px;
-  border-radius: 9px;
-  cursor: pointer;
-  font-weight: 750;
+button{
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--text);
+  padding:9px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
 }
 
-button:hover {
-  background: #f5f7fb;
+button:hover{
+  background:#f5f7fa;
 }
 
-button.primary {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: white;
+button.primary{
+  background:var(--primary);
+  border-color:var(--primary);
+  color:#fff;
 }
 
-button.primary:hover {
-  background: var(--primary-dark);
+button.primary:hover{
+  background:var(--primary-dark);
 }
 
-button.danger {
-  color: var(--danger);
+button.danger{
+  color:var(--danger);
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
 }
 
-.options {
-  margin-top: 17px;
-  display: grid;
-  gap: 9px;
+.options{
+  margin-top:15px;
+  display:grid;
+  gap:9px;
 }
 
-.checkbox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 600;
+.checkbox{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--text);
+  font-size:12px;
+  font-weight:bold;
+  text-transform:none;
 }
 
-.checkbox input {
-  width: auto;
+.checkbox input{
+  width:auto;
 }
 
-.notice {
-  margin-top: 15px;
-  padding: 11px 12px;
-  border-radius: 10px;
-  background: #f5f7ff;
-  border: 1px solid #dfe5ff;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
+.target{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  align-items:end;
 }
 
-.target-box {
-  margin-top: 15px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 9px;
-  align-items: end;
+.notice{
+  margin-top:13px;
+  padding:11px;
+  border-radius:9px;
+  background:#f7f8fc;
+  border:1px solid #e1e5ed;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
 }
 
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin: 17px 0;
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+  margin:14px 0;
 }
 
-.stat {
-  border: 1px solid var(--border);
-  border-radius: 11px;
-  padding: 12px;
-  background: #fafbfc;
+.stat{
+  padding:11px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#fafbfc;
 }
 
-.stat-label {
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 850;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+.stat-label{
+  color:var(--muted);
+  font-size:9px;
+  font-weight:bold;
+  text-transform:uppercase;
 }
 
-.stat-value {
-  margin-top: 5px;
-  font-size: 18px;
-  font-weight: 850;
+.stat-value{
+  margin-top:5px;
+  font-size:17px;
+  font-weight:bold;
 }
 
-.good {
-  color: var(--success);
+.good{color:var(--success)}
+.bad{color:var(--danger)}
+
+.preview-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
 }
 
-.bad {
-  color: var(--danger);
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--border);
+  border-radius:10px;
 }
 
-.table-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 12px;
+table{
+  width:100%;
+  min-width:850px;
+  border-collapse:collapse;
 }
 
-.table-header .left {
-  min-width: 0;
+th{
+  padding:10px 8px;
+  background:#f6f7f9;
+  border-bottom:1px solid var(--border);
+  color:var(--muted);
+  text-align:left;
+  font-size:10px;
+  text-transform:uppercase;
 }
 
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: 11px;
+td{
+  padding:5px;
+  border-bottom:1px solid var(--border);
 }
 
-table {
-  width: 100%;
-  min-width: 850px;
-  border-collapse: collapse;
+.cell{
+  width:100%;
+  padding:7px;
+  border:1px solid transparent;
+  border-radius:6px;
+  outline:none;
+  background:transparent;
 }
 
-th {
-  background: #f7f8fa;
-  color: var(--muted);
-  font-size: 11px;
-  text-align: left;
-  padding: 11px 9px;
-  border-bottom: 1px solid var(--border);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.cell:hover{
+  background:#f5f7fa;
 }
 
-td {
-  padding: 6px;
-  border-bottom: 1px solid var(--border);
+.cell:focus{
+  border-color:var(--primary);
+  background:#fff;
 }
 
-tr:last-child td {
-  border-bottom: 0;
+.numeric{
+  text-align:right;
 }
 
-.cell {
-  width: 100%;
-  border: 1px solid transparent;
-  border-radius: 7px;
-  padding: 8px;
-  background: transparent;
-  color: var(--text);
-  outline: none;
+.empty{
+  padding:55px 20px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
 }
 
-.cell:hover {
-  background: #f8f9fb;
+.analysis{
+  display:none;
+  margin-bottom:12px;
+  padding:11px;
+  border-radius:9px;
+  font-size:12px;
+  line-height:1.5;
 }
 
-.cell:focus {
-  border-color: var(--primary);
-  background: white;
+.warning{
+  background:#fff8e5;
+  border:1px solid #f0dfad;
+  color:var(--warning);
 }
 
-.numeric {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
+.success{
+  background:#eaf8f0;
+  border:1px solid #c8ead7;
+  color:var(--success);
 }
 
-.empty {
-  text-align: center;
-  color: var(--muted);
-  padding: 50px 20px;
-  font-size: 13px;
+.info{
+  background:#eef3ff;
+  border:1px solid #d8e1ff;
+  color:#3150a8;
 }
 
-.footer {
-  margin-top: 12px;
-  color: var(--muted);
-  font-size: 11px;
+.footer{
+  color:var(--muted);
+  font-size:10px;
+  margin-top:10px;
 }
 
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
+@media(max-width:900px){
+  .layout{
+    grid-template-columns:1fr;
   }
 
-  .stats {
-    grid-template-columns: 1fr;
-  }
-
-  .table-header {
-    align-items: flex-start;
-    flex-direction: column;
+  .stats{
+    grid-template-columns:1fr;
   }
 }
 
-@media (max-width: 600px) {
-  .container {
-    width: min(100% - 20px, 1200px);
-    padding-top: 20px;
+@media(max-width:600px){
+  .container{
+    width:calc(100% - 16px);
+    padding-top:18px;
   }
 
-  h1 {
-    font-size: 26px;
+  h1{
+    font-size:25px;
   }
 
-  .target-box {
-    grid-template-columns: 1fr;
+  .target{
+    grid-template-columns:1fr;
   }
 }
 </style>
@@ -370,268 +366,193 @@ tr:last-child td {
 
 <div class="container">
 
-  <div class="header">
-    <span class="badge">Okapathana</span>
+<div class="header">
+<span class="badge">OKAPATHANA</span>
+<h1>Paste → Detect → Edit → Excel</h1>
+<p class="subtitle">
+Turn messy bank statements and PDF-extracted ledger text into a clean
+DATE · PARTICULARS · PAYMENT · RECEIPTS · BALANCE spreadsheet.
+</p>
+</div>
 
-    <h1>Paste → Detect → Edit → Excel</h1>
 
-    <p class="subtitle">
-      Convert messy bank and ledger text into a clean
-      DATE · PARTICULARS · PAYMENT · RECEIPTS · BALANCE spreadsheet.
-    </p>
-  </div>
+<div class="layout">
 
 
-  <div class="layout">
+<!-- INPUT -->
 
-    <!-- LEFT SIDE -->
+<section class="card">
 
-    <section class="card">
+<h2>1. Paste your statement</h2>
 
-      <h2>1. Paste your text</h2>
+<div class="help">
+Paste the complete text extracted from your bank statement.
+The parser supports both normal transaction rows and statements
+where PDF extraction has separated dates, descriptions and numbers
+into different blocks.
+</div>
 
-      <div class="help">
-        Paste your bank statement or ledger text below.
-        The system looks for transaction dates and the financial
-        numbers belonging to each transaction.
-      </div>
+<textarea id="sourceText"
+placeholder="Paste your complete bank statement text here..."></textarea>
 
 
-      <textarea id="sourceText"
-        placeholder="Paste your bank statement text here..."></textarea>
+<div class="field">
 
+<label for="dateFormat">DATE FORMAT</label>
 
-      <div class="field">
+<select id="dateFormat">
 
-        <label for="dateFormat">
-          DATE FORMAT
-        </label>
+<option value="DDMMMYY">01FEB25</option>
+<option value="DDMMM">01FEB</option>
+<option value="DD/MM/YYYY">01/02/2025</option>
+<option value="DD-MM-YYYY">01-02-2025</option>
+<option value="YYYY-MM-DD">2025-02-01</option>
 
-        <select id="dateFormat">
+</select>
 
-          <option value="DDMMMYY">
-            01FEB25
-          </option>
+</div>
 
-          <option value="DDMMM">
-            01FEB
-          </option>
 
-          <option value="DD/MM/YYYY">
-            01/02/2025
-          </option>
+<div class="button-row">
 
-          <option value="DD-MM-YYYY">
-            01-02-2025
-          </option>
+<button class="primary" id="detectButton">
+Detect Transactions
+</button>
 
-          <option value="YYYY-MM-DD">
-            2025-02-01
-          </option>
+<button id="sampleButton">
+Load Sample
+</button>
 
-        </select>
+<button class="danger" id="clearButton">
+Clear
+</button>
 
-      </div>
+</div>
 
 
-      <div class="button-row">
+<div class="options">
 
-        <button
-          class="primary"
-          id="detectButton">
-          Detect Transactions
-        </button>
+<label class="checkbox">
+<input type="checkbox" id="showTotals" checked>
+Show totals + net profit in Excel
+</label>
 
-        <button id="sampleButton">
-          Load Sample
-        </button>
+<label class="checkbox">
+<input type="checkbox" id="recalculateBalance">
+Recalculate balances
+</label>
 
-        <button
-          class="danger"
-          id="clearButton">
-          Clear
-        </button>
+</div>
 
-      </div>
 
+<div class="target">
 
-      <div class="options">
+<div>
 
-        <label class="checkbox">
+<label for="profitTarget">
+Minimum net profit target
+</label>
 
-          <input
-            type="checkbox"
-            id="showTotals"
-            checked>
+<input
+type="number"
+id="profitTarget"
+value="600000"
+min="0"
+step="0.01">
 
-          Show totals and net profit in Excel
+</div>
 
-        </label>
+<button id="analyzeButton">
+Analyze
+</button>
 
+</div>
 
-        <label class="checkbox">
 
-          <input
-            type="checkbox"
-            id="recalculateBalance">
+<div class="notice">
 
-          Recalculate balance from transactions
+<strong>Financial accuracy:</strong>
+Detected figures are not silently changed to achieve a target.
+You can edit any detected amount manually. The target is used only
+for analysis.
 
-        </label>
+</div>
 
-      </div>
+</section>
 
 
-      <div class="target-box">
 
-        <div>
+<!-- PREVIEW -->
 
-          <label for="profitTarget">
-            MINIMUM NET PROFIT TARGET
-          </label>
+<section class="card">
 
-          <input
-            type="number"
-            id="profitTarget"
-            value="600000"
-            min="0"
-            step="0.01">
+<div class="preview-head">
 
-        </div>
+<div>
 
-        <button id="analyzeButton">
-          Analyze
-        </button>
+<h2>2. Preview & Edit</h2>
 
-      </div>
+<div class="help" id="rowStatus">
+No transactions detected yet.
+</div>
 
+</div>
 
-      <div class="notice">
+<button
+class="primary"
+id="downloadButton"
+disabled>
+Download Excel
+</button>
 
-        <strong>Financial accuracy:</strong>
-        The system preserves the figures it detects.
-        It will not silently change financial records to manufacture
-        a desired profit. You can edit any detected value manually
-        before exporting.
+</div>
 
-      </div>
 
-    </section>
+<div class="stats">
 
+<div class="stat">
+<div class="stat-label">Total Payments</div>
+<div class="stat-value" id="totalPayments">0.00</div>
+</div>
 
+<div class="stat">
+<div class="stat-label">Total Receipts</div>
+<div class="stat-value" id="totalReceipts">0.00</div>
+</div>
 
-    <!-- RIGHT SIDE -->
+<div class="stat">
+<div class="stat-label">Net Profit</div>
+<div class="stat-value" id="netProfit">0.00</div>
+</div>
 
-    <section class="card">
+</div>
 
-      <div class="table-header">
 
-        <div class="left">
+<div id="analysisResult" class="analysis"></div>
 
-          <h2>2. Preview & Edit</h2>
 
-          <div
-            class="help"
-            id="rowStatus">
-            No transactions detected yet.
-          </div>
+<div class="table-wrap">
 
-        </div>
+<div id="tableContainer">
 
+<div class="empty">
+Paste your statement and click
+<strong>Detect Transactions</strong>.
+</div>
 
-        <button
-          class="primary"
-          id="downloadButton"
-          disabled>
+</div>
 
-          Download Excel
+</div>
 
-        </button>
 
-      </div>
+<div class="footer">
+Every detected cell is editable. Changes immediately update the
+financial totals.
+</div>
 
+</section>
 
-      <div class="stats">
-
-        <div class="stat">
-
-          <div class="stat-label">
-            Total Payments
-          </div>
-
-          <div
-            class="stat-value"
-            id="totalPayments">
-            0.00
-          </div>
-
-        </div>
-
-
-        <div class="stat">
-
-          <div class="stat-label">
-            Total Receipts
-          </div>
-
-          <div
-            class="stat-value"
-            id="totalReceipts">
-            0.00
-          </div>
-
-        </div>
-
-
-        <div class="stat">
-
-          <div class="stat-label">
-            Net Profit
-          </div>
-
-          <div
-            class="stat-value"
-            id="netProfit">
-            0.00
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div
-        class="notice"
-        id="analysisResult"
-        style="display:none">
-      </div>
-
-
-      <div class="table-wrapper">
-
-        <div id="tableContainer">
-
-          <div class="empty">
-            Paste your text on the left and click
-            <strong>Detect Transactions</strong>.
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="footer">
-
-        You can edit every detected cell.
-        Changing a payment or receipt automatically updates
-        the totals and net profit.
-
-      </div>
-
-    </section>
-
-  </div>
+</div>
 
 </div>
 
@@ -641,465 +562,614 @@ tr:last-child td {
 "use strict";
 
 
-/* =========================================================
-   APPLICATION STATE
-========================================================= */
+/* ============================================================
+   STATE
+============================================================ */
 
 const state = {
-  rows: []
+  rows: [],
+  mode: ""
 };
 
 
-/* =========================================================
-   HELPERS
-========================================================= */
+/* ============================================================
+   DOM
+============================================================ */
 
-function $(id) {
+function $(id){
   return document.getElementById(id);
 }
 
 
-function formatMoney(value) {
+/* ============================================================
+   MONEY
+============================================================ */
 
-  const number = Number(value) || 0;
+function parseMoney(value){
 
-  return number.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-
-}
-
-
-function parseMoney(value) {
-
-  if (value === null || value === undefined) {
+  if(value === null || value === undefined){
     return 0;
   }
 
-  let text = String(value)
+  let s = String(value)
     .trim()
-    .replace(/\s/g, "")
-    .replace(/CR$/i, "")
-    .replace(/DR$/i, "");
+    .replace(/\s/g,"")
+    .replace(/CR$/i,"")
+    .replace(/DR$/i,"");
 
-  if (!text) {
+  if(!s){
     return 0;
   }
 
   let negative = false;
 
-  if (
-    text.startsWith("(") &&
-    text.endsWith(")")
-  ) {
+  if(s.startsWith("(") && s.endsWith(")")){
     negative = true;
   }
 
-  if (text.endsWith("-")) {
+  if(s.endsWith("-")){
     negative = true;
   }
 
-  text = text
-    .replace(/[(),]/g, "")
-    .replace(/-$/, "");
+  s = s
+    .replace(/[(),]/g,"")
+    .replace(/-$/,"");
 
-  const number = parseFloat(text);
+  const n = parseFloat(s);
 
-  if (!Number.isFinite(number)) {
+  if(!Number.isFinite(n)){
     return 0;
   }
 
-  return negative
-    ? -Math.abs(number)
-    : number;
+  return negative ? -Math.abs(n) : n;
 }
 
 
-function escapeHTML(value) {
+function money(value){
 
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-}
-
-
-/* =========================================================
-   DATE DETECTION
-========================================================= */
-
-function dateMatch(value) {
-
-  if (!value) {
-    return false;
-  }
-
-  const text =
-    String(value).trim();
-
-  /*
-    Examples accepted:
-
-    01FEB
-    01FEB25
-    01FEB2025
-    1FEB
-    1FEB25
-    01/02/2025
-    01-02-2025
-    2025-02-01
-  */
-
-  return (
-    /^\d{1,2}[A-Za-z]{3}(?:\d{2}|\d{4})?$/.test(text) ||
-    /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/.test(text) ||
-    /^\d{4}-\d{1,2}-\d{1,2}$/.test(text)
+  return Number(value || 0).toLocaleString(
+    "en-US",
+    {
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    }
   );
 
 }
 
 
-/* =========================================================
-   DATE FORMATTING
-========================================================= */
+function escapeHTML(value){
 
-function formatDate(rawDate) {
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
-  const selectedFormat =
-    $("dateFormat").value;
-
-  let text =
-    String(rawDate)
-      .trim()
-      .toUpperCase();
+}
 
 
-  /*
-    Handle 01FEB / 01FEB25 / 01FEB2025
-  */
+/* ============================================================
+   DATE DETECTION
+============================================================ */
 
-  const compact =
-    text.match(
-      /^(\d{1,2})([A-Z]{3})(\d{2}|\d{4})?$/
-    );
+function isDateToken(value){
 
-
-  if (compact) {
-
-    const day =
-      compact[1].padStart(2, "0");
-
-    const month =
-      compact[2];
-
-    let year =
-      compact[3] || "";
-
-
-    if (selectedFormat === "DDMMM") {
-      return day + month;
-    }
-
-
-    if (selectedFormat === "DDMMMYY") {
-
-      if (!year) {
-        return day + month;
-      }
-
-      if (year.length === 4) {
-        year = year.slice(-2);
-      }
-
-      return day + month + year;
-    }
-
-
-    const months = [
-      "JAN",
-      "FEB",
-      "MAR",
-      "APR",
-      "MAY",
-      "JUN",
-      "JUL",
-      "AUG",
-      "SEP",
-      "OCT",
-      "NOV",
-      "DEC"
-    ];
-
-    const monthNumber =
-      months.indexOf(month) + 1;
-
-
-    if (!year) {
-      year =
-        String(new Date().getFullYear());
-    }
-
-    if (year.length === 2) {
-      year = "20" + year;
-    }
-
-
-    const mm =
-      String(monthNumber).padStart(2, "0");
-
-
-    if (selectedFormat === "DD/MM/YYYY") {
-      return `${day}/${mm}/${year}`;
-    }
-
-
-    if (selectedFormat === "DD-MM-YYYY") {
-      return `${day}-${mm}-${year}`;
-    }
-
-
-    if (selectedFormat === "YYYY-MM-DD") {
-      return `${year}-${mm}-${day}`;
-    }
-
+  if(!value){
+    return false;
   }
 
-
-  /*
-    Handle slash / hyphen dates
-  */
-
-  let match =
-    text.match(
-      /^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2}|\d{4})$/
-    );
+  const s = String(value)
+    .trim()
+    .replace(/[,:;]+$/,"");
 
 
-  if (match) {
+  return (
+    /^\d{1,2}[A-Za-z]{3}(?:\d{2}|\d{4})?$/.test(s) ||
+    /^\d{1,2}[\/-]\d{1,2}(?:[\/-]\d{2,4})?$/.test(s) ||
+    /^\d{4}-\d{1,2}-\d{1,2}$/.test(s)
+  );
 
-    let day =
-      match[1].padStart(2, "0");
-
-    let month =
-      match[2].padStart(2, "0");
-
-    let year =
-      match[3];
+}
 
 
-    if (year.length === 2) {
-      year = "20" + year;
-    }
+/* ============================================================
+   FORMAT DATE
+============================================================ */
+
+function formatDate(raw){
+
+  let s = String(raw)
+    .trim()
+    .replace(/[,:;]+$/,"")
+    .toUpperCase();
+
+  const selected = $("dateFormat").value;
 
 
-    if (selectedFormat === "DDMMM") {
+  /* 01FEB / 01FEB25 / 01FEB2025 */
 
-      const months = [
-        "JAN","FEB","MAR","APR","MAY","JUN",
-        "JUL","AUG","SEP","OCT","NOV","DEC"
-      ];
+  let m = s.match(
+    /^(\d{1,2})([A-Z]{3})(\d{2}|\d{4})?$/
+  );
 
-      return day + months[Number(month) - 1];
+  if(m){
 
-    }
-
-
-    if (selectedFormat === "DDMMMYY") {
-
-      const months = [
-        "JAN","FEB","MAR","APR","MAY","JUN",
-        "JUL","AUG","SEP","OCT","NOV","DEC"
-      ];
-
-      return day +
-        months[Number(month) - 1] +
-        year.slice(-2);
-
-    }
-
-
-    if (selectedFormat === "DD/MM/YYYY") {
-      return `${day}/${month}/${year}`;
-    }
-
-
-    if (selectedFormat === "DD-MM-YYYY") {
-      return `${day}-${month}-${year}`;
-    }
-
-
-    if (selectedFormat === "YYYY-MM-DD") {
-      return `${year}-${month}-${day}`;
-    }
-
-  }
-
-
-  /*
-    Handle YYYY-MM-DD
-  */
-
-  match =
-    text.match(
-      /^(\d{4})-(\d{1,2})-(\d{1,2})$/
-    );
-
-
-  if (match) {
-
-    const year = match[1];
-
-    const month =
-      match[2].padStart(2, "0");
-
-    const day =
-      match[3].padStart(2, "0");
-
-
-    if (selectedFormat === "YYYY-MM-DD") {
-      return `${year}-${month}-${day}`;
-    }
-
+    let day = m[1].padStart(2,"0");
+    let monthName = m[2];
+    let year = m[3] || "";
 
     const months = [
       "JAN","FEB","MAR","APR","MAY","JUN",
       "JUL","AUG","SEP","OCT","NOV","DEC"
     ];
 
+    const month =
+      months.indexOf(monthName) + 1;
 
-    if (selectedFormat === "DDMMM") {
-      return day + months[Number(month) - 1];
+    if(selected === "DDMMM"){
+      return day + monthName;
     }
 
+    if(selected === "DDMMMYY"){
 
-    if (selectedFormat === "DDMMMYY") {
-      return day +
-        months[Number(month) - 1] +
-        year.slice(-2);
+      if(!year){
+        return day + monthName;
+      }
+
+      if(year.length === 4){
+        year = year.slice(-2);
+      }
+
+      return day + monthName + year;
     }
 
+    if(!year){
+      year = String(new Date().getFullYear());
+    }
 
-    if (selectedFormat === "DD/MM/YYYY") {
+    if(year.length === 2){
+      year = "20" + year;
+    }
+
+    const mm =
+      String(month).padStart(2,"0");
+
+    if(selected === "DD/MM/YYYY"){
+      return `${day}/${mm}/${year}`;
+    }
+
+    if(selected === "DD-MM-YYYY"){
+      return `${day}-${mm}-${year}`;
+    }
+
+    if(selected === "YYYY-MM-DD"){
+      return `${year}-${mm}-${day}`;
+    }
+
+  }
+
+
+  /* 01/03 or 01/03/2026 */
+
+  m = s.match(
+    /^(\d{1,2})[\/-](\d{1,2})(?:[\/-](\d{2}|\d{4}))?$/
+  );
+
+  if(m){
+
+    let day =
+      m[1].padStart(2,"0");
+
+    let month =
+      m[2].padStart(2,"0");
+
+    let year =
+      m[3] || "";
+
+    const months = [
+      "JAN","FEB","MAR","APR","MAY","JUN",
+      "JUL","AUG","SEP","OCT","NOV","DEC"
+    ];
+
+    if(selected === "DDMMM"){
+
+      return (
+        day +
+        months[Number(month)-1]
+      );
+
+    }
+
+    if(selected === "DDMMMYY"){
+
+      if(!year){
+        return (
+          day +
+          months[Number(month)-1]
+        );
+      }
+
+      if(year.length === 4){
+        year = year.slice(-2);
+      }
+
+      return (
+        day +
+        months[Number(month)-1] +
+        year
+      );
+
+    }
+
+    if(!year){
+      year =
+        String(new Date().getFullYear());
+    }
+
+    if(year.length === 2){
+      year = "20" + year;
+    }
+
+    if(selected === "DD/MM/YYYY"){
       return `${day}/${month}/${year}`;
     }
 
+    if(selected === "DD-MM-YYYY"){
+      return `${day}-${month}-${year}`;
+    }
 
-    if (selectedFormat === "DD-MM-YYYY") {
+    if(selected === "YYYY-MM-DD"){
+      return `${year}-${month}-${day}`;
+    }
+
+  }
+
+
+  /* YYYY-MM-DD */
+
+  m = s.match(
+    /^(\d{4})-(\d{1,2})-(\d{1,2})$/
+  );
+
+  if(m){
+
+    const year = m[1];
+    const month = m[2].padStart(2,"0");
+    const day = m[3].padStart(2,"0");
+
+    const months = [
+      "JAN","FEB","MAR","APR","MAY","JUN",
+      "JUL","AUG","SEP","OCT","NOV","DEC"
+    ];
+
+    if(selected === "YYYY-MM-DD"){
+      return `${year}-${month}-${day}`;
+    }
+
+    if(selected === "DDMMM"){
+      return day + months[Number(month)-1];
+    }
+
+    if(selected === "DDMMMYY"){
+      return (
+        day +
+        months[Number(month)-1] +
+        year.slice(-2)
+      );
+    }
+
+    if(selected === "DD/MM/YYYY"){
+      return `${day}/${month}/${year}`;
+    }
+
+    if(selected === "DD-MM-YYYY"){
       return `${day}-${month}-${year}`;
     }
 
   }
 
 
-  return text;
+  return s;
 }
 
 
-/* =========================================================
+/* ============================================================
    NUMBER DETECTION
-========================================================= */
+============================================================ */
 
-function isNumberToken(value) {
+function isMoneyToken(value){
 
-  if (!value) {
+  if(!value){
     return false;
   }
 
-  const text =
-    String(value).trim();
-
+  let s = String(value)
+    .trim()
+    .replace(/\s/g,"");
 
   return /^\(?[+-]?[\d,]+(?:\.\d+)?\)?(?:CR|DR)?$/i
-    .test(text);
+    .test(s);
 
 }
 
 
-/* =========================================================
-   PARSE ONE TRANSACTION LINE
-========================================================= */
+/* ============================================================
+   REMOVE HEADERS / FOOTERS
+============================================================ */
 
-function parseLine(line) {
+function isNoiseLine(line){
 
-  const clean =
-    String(line)
-      .trim();
+  const s =
+    line.trim().toUpperCase();
+
+  if(!s){
+    return true;
+  }
+
+  const noise = [
+
+    "STATEMENT OF ACCOUNT",
+    "STATEMENT",
+    "PARTICULARS",
+    "PAYMENTS",
+    "RECEIPTS",
+    "DATE",
+    "ACCOUNT NUMBER",
+    "ACCOUNT",
+    "BRANCH",
+    "CURRENCY",
+    "TOTAL UNREALIZED",
+    "TOTAL DEPOSITS",
+    "TOTAL WITHDRAWALS",
+    "BANK OF",
+    "ENTERS TO THE NATION",
+    "ENKERS TO THE NATION"
+
+  ];
+
+  return noise.some(
+    word => s.includes(word)
+  );
+
+}
 
 
-  if (!clean) {
-    return null;
+/* ============================================================
+   NORMAL ROW PARSER
+============================================================ */
+
+function parseNormalRows(lines){
+
+  const result = [];
+
+  for(let line of lines){
+
+    line = line.trim();
+
+    if(!line || isNoiseLine(line)){
+      continue;
+    }
+
+
+    const tokens =
+      line.split(/\s+/);
+
+
+    const dateIndex =
+      tokens.findIndex(
+        t => isDateToken(t)
+      );
+
+
+    if(dateIndex === -1){
+      continue;
+    }
+
+
+    const numbers = [];
+
+
+    for(
+      let i=tokens.length-1;
+      i>dateIndex;
+      i--
+    ){
+
+      if(isMoneyToken(tokens[i])){
+
+        numbers.unshift(tokens[i]);
+
+        if(numbers.length === 3){
+          break;
+        }
+
+      }
+
+    }
+
+
+    if(numbers.length !== 3){
+      continue;
+    }
+
+
+    const end =
+      tokens.length - numbers.length;
+
+
+    const description =
+      tokens
+        .slice(dateIndex+1,end)
+        .join(" ")
+        .replace(/^[-:|]+/,"")
+        .trim();
+
+
+    result.push({
+
+      date:
+        formatDate(tokens[dateIndex]),
+
+      description:
+        description || "—",
+
+      payment:
+        parseMoney(numbers[0]),
+
+      receipt:
+        parseMoney(numbers[1]),
+
+      balance:
+        parseMoney(numbers[2])
+
+    });
+
+  }
+
+  return result;
+}
+
+
+/* ============================================================
+   COLUMN-BLOCK PARSER
+============================================================ */
+
+/*
+  This is the important part for PDF-extracted statements.
+
+  Many bank PDFs become:
+
+  DATE
+  01/03
+  02/03
+  04/03
+  ...
+
+  then:
+
+  PARTICULARS
+  ATM CASH WITHDRAWAL
+  TRANSFER DEBIT
+  ...
+
+  then:
+
+  11,000
+  0
+  533,983.88
+  ...
+
+  So we reconstruct the rows from the separate blocks.
+*/
+
+function parseColumnStatement(lines){
+
+  const cleaned =
+    lines
+      .map(x => x.trim())
+      .filter(x => x.length > 0);
+
+
+  /*
+    Find every date in the complete document.
+  */
+
+  const dates = [];
+
+  cleaned.forEach(line => {
+
+    /*
+      A line containing only a date is very strong evidence.
+    */
+
+    if(
+      isDateToken(line) &&
+      !/^\d{4}-\d/.test(line)
+    ){
+
+      dates.push(line);
+
+    }
+
+  });
+
+
+  /*
+    Also detect dates appearing at the start of a line.
+  */
+
+  if(dates.length < 2){
+
+    cleaned.forEach(line => {
+
+      const tokens =
+        line.split(/\s+/);
+
+      if(tokens.length > 0){
+
+        const first =
+          tokens[0];
+
+        if(
+          isDateToken(first) &&
+          !dates.includes(first)
+        ){
+
+          dates.push(first);
+
+        }
+
+      }
+
+    });
+
   }
 
 
   /*
-    Remove repeated whitespace but keep the
-    individual words available for parsing.
+    Find the financial-number block.
+
+    We collect every numeric token, but ignore obvious
+    account numbers and dates.
   */
 
-  const tokens =
-    clean.split(/\s+/);
+  const numberTokens = [];
 
 
-  /*
-    Find the first recognizable date.
-  */
+  for(const line of cleaned){
 
-  const dateIndex =
-    tokens.findIndex(
-      token => dateMatch(token)
-    );
+    const tokens =
+      line.split(/\s+/);
 
 
-  if (dateIndex === -1) {
-    return null;
-  }
+    for(const token of tokens){
+
+      if(
+        isMoneyToken(token) &&
+        !isDateToken(token)
+      ){
+
+        const value =
+          parseMoney(token);
 
 
-  const rawDate =
-    tokens[dateIndex];
+        /*
+          Account numbers are normally long integers.
+          Financial values in this statement have decimal
+          places or are reasonably sized.
+        */
 
+        if(
+          token.includes(".") ||
+          Math.abs(value) < 10000000
+        ){
 
-  const date =
-    formatDate(rawDate);
+          numberTokens.push(value);
 
+        }
 
-  /*
-    Everything after the date.
-  */
-
-  const afterDate =
-    tokens.slice(dateIndex + 1);
-
-
-  /*
-    Financial statements commonly put the three
-    numeric columns at the end:
-
-    PAYMENT RECEIPT BALANCE
-
-    We therefore collect the last three numeric
-    tokens.
-  */
-
-  const numbers = [];
-
-
-  for (
-    let i = afterDate.length - 1;
-    i >= 0;
-    i--
-  ) {
-
-    if (isNumberToken(afterDate[i])) {
-
-      numbers.unshift(afterDate[i]);
-
-      if (numbers.length === 3) {
-        break;
       }
 
     }
@@ -1107,361 +1177,723 @@ function parseLine(line) {
   }
 
 
-  if (numbers.length < 3) {
-    return null;
+  /*
+    Descriptions.
+
+    We identify lines that are not dates, not numbers,
+    not headings and look like normal bank descriptions.
+  */
+
+  const descriptions = [];
+
+
+  for(const line of cleaned){
+
+    if(isDateToken(line)){
+      continue;
+    }
+
+    if(isNoiseLine(line)){
+      continue;
+    }
+
+    if(
+      line.includes("/") &&
+      /^\d/.test(line)
+    ){
+      continue;
+    }
+
+    /*
+      Skip pure numeric lines.
+    */
+
+    if(
+      line
+        .split(/\s+/)
+        .every(x => isMoneyToken(x))
+    ){
+      continue;
+    }
+
+    /*
+      Skip obvious account metadata.
+    */
+
+    if(
+      /^\d{6,}$/.test(
+        line.replace(/\s/g,"")
+      )
+    ){
+      continue;
+    }
+
+    /*
+      Skip known metadata.
+    */
+
+    const upper =
+      line.toUpperCase();
+
+    if(
+      upper.includes("MRS ") ||
+      upper.includes("NO. ") ||
+      upper.includes("WAIKKALA") ||
+      upper.includes("FERNANDO") ||
+      upper.includes("LKR") ||
+      upper.includes("CURRENCY")
+    ){
+      continue;
+    }
+
+    descriptions.push(line);
+
   }
 
 
   /*
-    Description = everything between the date
-    and the three financial values.
+    If there aren't enough dates, this isn't a column
+    statement we can confidently reconstruct.
   */
 
-  let descriptionEnd =
-    afterDate.length - numbers.length;
-
-
-  let description =
-    afterDate
-      .slice(0, descriptionEnd)
-      .join(" ")
-      .trim();
-
-
-  /*
-    Remove common separator characters.
-  */
-
-  description =
-    description
-      .replace(/^[-:|]+/, "")
-      .replace(/[-:|]+$/, "")
-      .trim();
-
-
-  if (!description) {
-    description = "—";
+  if(dates.length < 2){
+    return [];
   }
 
 
-  return {
+  /*
+    The numeric block normally begins with an opening balance
+    followed by payment, receipt and closing balance triples.
 
-    date,
+    Therefore we look for a sequence:
 
-    description,
+    payment
+    receipt
+    balance
 
-    payment:
-      parseMoney(numbers[0]),
+    where:
 
-    receipt:
-      parseMoney(numbers[1]),
+    previous balance - payment + receipt = balance
 
-    balance:
-      parseMoney(numbers[2])
+    This gives us a much stronger reconstruction.
+  */
 
-  };
 
+  let start = 0;
+
+  let openingBalance = null;
+
+
+  /*
+    Try to locate the first balance from the numeric stream.
+
+    The sample statement has:
+
+    544,983.88
+    11,000.00
+    0.00
+    533,983.88
+
+    Therefore the first number is the opening/reference balance.
+  */
+
+  if(numberTokens.length >= 4){
+
+    const candidate =
+      numberTokens[0];
+
+    const p =
+      numberTokens[1];
+
+    const r =
+      numberTokens[2];
+
+    const b =
+      numberTokens[3];
+
+
+    if(
+      Math.abs(
+        candidate - p + r - b
+      ) < 0.02
+    ){
+
+      openingBalance =
+        candidate;
+
+      start = 1;
+
+    }
+
+  }
+
+
+  /*
+    Build transaction triples.
+  */
+
+  const triples = [];
+
+  for(
+    let i=start;
+    i+2<numberTokens.length;
+    i+=3
+  ){
+
+    triples.push({
+
+      payment:
+        numberTokens[i],
+
+      receipt:
+        numberTokens[i+1],
+
+      balance:
+        numberTokens[i+2]
+
+    });
+
+  }
+
+
+  /*
+    Sometimes the extraction contains a line where payment
+    and receipt are on the same line. The numeric token stream
+    still gives the correct sequence.
+  */
+
+
+  const count =
+    Math.min(
+      dates.length,
+      triples.length
+    );
+
+
+  if(count === 0){
+    return [];
+  }
+
+
+  /*
+    Descriptions may have extra BALANCE B/F and BALANCE C/F
+    entries. We remove standalone closing/opening balance
+    descriptions when there are too many descriptions.
+  */
+
+  let desc =
+    descriptions.slice();
+
+
+  /*
+    Prefer transaction-like descriptions.
+  */
+
+  desc =
+    desc.filter(x => {
+
+      const upper =
+        x.toUpperCase();
+
+      return !(
+        upper === "BALANCE B/F" &&
+        desc.length > count
+      );
+
+    });
+
+
+  /*
+    Remove BALANCE C/F if it is merely the statement footer.
+  */
+
+  if(desc.length > count){
+
+    desc =
+      desc.filter(
+        x =>
+          x.toUpperCase() !==
+          "BALANCE C/F"
+      );
+
+  }
+
+
+  /*
+    If still too many descriptions, take the first count.
+    This is intentionally conservative.
+  */
+
+  if(desc.length > count){
+
+    desc =
+      desc.slice(0,count);
+
+  }
+
+
+  /*
+    If descriptions are fewer, fill the missing rows.
+  */
+
+  while(desc.length < count){
+
+    desc.push("—");
+
+  }
+
+
+  /*
+    Construct final rows.
+  */
+
+  const rows = [];
+
+
+  for(let i=0;i<count;i++){
+
+    rows.push({
+
+      date:
+        formatDate(dates[i]),
+
+      description:
+        desc[i] || "—",
+
+      payment:
+        triples[i].payment,
+
+      receipt:
+        triples[i].receipt,
+
+      balance:
+        triples[i].balance
+
+    });
+
+  }
+
+
+  /*
+    Validate balances.
+
+    We don't delete rows when validation fails.
+    We mark them so the user can inspect/edit them.
+  */
+
+  let previous =
+    openingBalance;
+
+
+  rows.forEach(row => {
+
+    row.balanceValid = true;
+
+
+    if(previous !== null){
+
+      const expected =
+        previous -
+        row.payment +
+        row.receipt;
+
+
+      if(
+        Math.abs(
+          expected - row.balance
+        ) > 0.05
+      ){
+
+        row.balanceValid = false;
+
+      }
+
+    }
+
+
+    previous =
+      row.balance;
+
+  });
+
+
+  return rows;
 }
 
 
-/* =========================================================
-   DETECT ALL TRANSACTIONS
-========================================================= */
+/* ============================================================
+   MASTER DETECTOR
+============================================================ */
 
-function detectTransactions() {
+function detectTransactions(){
 
   const text =
     $("sourceText").value;
+
+
+  if(!text.trim()){
+
+    alert(
+      "Please paste your bank statement text first."
+    );
+
+    return;
+
+  }
 
 
   const lines =
     text.split(/\r?\n/);
 
 
-  const rows = [];
+  /*
+    First try normal row-by-row parsing.
+  */
+
+  const normal =
+    parseNormalRows(lines);
 
 
-  for (const line of lines) {
+  /*
+    If we detect several complete rows, use that.
+  */
 
-    const parsed =
-      parseLine(line);
+  if(normal.length >= 2){
+
+    state.rows =
+      normal;
+
+    state.mode =
+      "row";
+
+  }else{
+
+    /*
+      Otherwise use the column-block parser.
+    */
+
+    const column =
+      parseColumnStatement(lines);
 
 
-    if (parsed) {
-      rows.push(parsed);
-    }
+    state.rows =
+      column;
+
+    state.mode =
+      "column";
 
   }
-
-
-  state.rows = rows;
 
 
   renderTable();
 
 
-  if (rows.length === 0) {
+  if(!state.rows.length){
 
     $("rowStatus").textContent =
-      "No transactions detected.";
+      "No transactions could be reconstructed.";
+
+    showAnalysis(
+      "The statement structure could not be reconstructed automatically. Check that the pasted text contains dates, particulars and payment/receipt/balance values.",
+      "warning"
+    );
 
   }
 
 }
 
 
-/* =========================================================
+/* ============================================================
    SAMPLE
-========================================================= */
+============================================================ */
 
-function loadSample() {
+function loadSample(){
 
   $("sourceText").value =
-`01FEB      PICK ME         100,000.00       00.00    100,000
-03FEB      RENT              00.00           600,000    1,600,000.00
-27FEB      WAGES           300,000         00.00          1,250,000.00`;
+`01/03
+02/03
+04/03
+06/03
+07/03
 
+ATM CASH WITHDRAWAL
+TRANSFER DEBIT
+PAYMENT FOR MONTHLY BID RENT
+CASH DEPOSIT
+TRANSFER CREDIT
+
+544,983.88
+11,000.00
+0.00
+533,983.88
+200,000.00
+733,983.88
+13,800.00
+0.00
+720,183.88
+0.00
+91,800.00
+811,983.88
+15,005.00
+0.00
+796,978.88`;
 
   detectTransactions();
 
 }
 
 
-/* =========================================================
+/* ============================================================
    RENDER TABLE
-========================================================= */
+============================================================ */
 
-function renderTable() {
+function renderTable(){
 
   const container =
     $("tableContainer");
 
 
-  if (!state.rows.length) {
+  if(!state.rows.length){
 
     container.innerHTML =
       `<div class="empty">
-        No rows detected.
-        Check that each transaction contains
-        a recognizable date and three financial values.
+        No transactions detected.
       </div>`;
 
-
-    $("downloadButton").disabled = true;
+    $("downloadButton").disabled =
+      true;
 
     updateStatistics();
 
     return;
+
   }
 
 
-  $("downloadButton").disabled = false;
+  $("downloadButton").disabled =
+    false;
 
 
   $("rowStatus").textContent =
-    `${state.rows.length} transaction${
-      state.rows.length === 1 ? "" : "s"
-    } detected. You can edit the cells below.`;
+    `${state.rows.length} transactions detected. ` +
+    `Detection mode: ${
+      state.mode === "column"
+        ? "bank-statement reconstruction"
+        : "normal rows"
+    }. ` +
+    `All cells can be edited.`;
 
 
   let html = `
 
-  <table>
+<table>
 
-    <thead>
+<thead>
 
-      <tr>
+<tr>
+<th>DATE</th>
+<th>PARTICULARS</th>
+<th>PAYMENT</th>
+<th>RECEIPTS</th>
+<th>BALANCE</th>
+<th></th>
+</tr>
 
-        <th>DATE</th>
-        <th>PARTICULARS</th>
-        <th>PAYMENT</th>
-        <th>RECEIPTS</th>
-        <th>BALANCE</th>
-        <th></th>
+</thead>
 
-      </tr>
-
-    </thead>
-
-    <tbody>
-  `;
+<tbody>
+`;
 
 
-  state.rows.forEach(
-    (row, index) => {
+  state.rows.forEach((row,index)=>{
 
-      html += `
-
-      <tr>
-
-        <td>
-
-          <input
-            class="cell"
-            data-index="${index}"
-            data-field="date"
-            value="${escapeHTML(row.date)}">
-
-        </td>
+    const invalid =
+      row.balanceValid === false;
 
 
-        <td>
+    html += `
 
-          <input
-            class="cell"
-            data-index="${index}"
-            data-field="description"
-            value="${escapeHTML(row.description)}">
+<tr>
 
-        </td>
+<td>
 
+<input
+class="cell"
+data-index="${index}"
+data-field="date"
+value="${escapeHTML(row.date)}">
 
-        <td>
-
-          <input
-            class="cell numeric"
-            data-index="${index}"
-            data-field="payment"
-            value="${formatMoney(row.payment)}">
-
-        </td>
+</td>
 
 
-        <td>
+<td>
 
-          <input
-            class="cell numeric"
-            data-index="${index}"
-            data-field="receipt"
-            value="${formatMoney(row.receipt)}">
+<input
+class="cell"
+data-index="${index}"
+data-field="description"
+value="${escapeHTML(row.description)}">
 
-        </td>
-
-
-        <td>
-
-          <input
-            class="cell numeric"
-            data-index="${index}"
-            data-field="balance"
-            value="${formatMoney(row.balance)}">
-
-        </td>
+</td>
 
 
-        <td>
+<td>
 
-          <button
-            class="danger delete-row"
-            data-index="${index}">
-            ×
-          </button>
+<input
+class="cell numeric"
+data-index="${index}"
+data-field="payment"
+value="${money(row.payment)}">
 
-        </td>
+</td>
 
-      </tr>
 
-      `;
+<td>
 
-    }
-  );
+<input
+class="cell numeric"
+data-index="${index}"
+data-field="receipt"
+value="${money(row.receipt)}">
+
+</td>
+
+
+<td>
+
+<input
+class="cell numeric"
+data-index="${index}"
+data-field="balance"
+value="${money(row.balance)}"
+title="${
+  invalid
+  ? "Balance does not match the previous balance mathematically."
+  : "Balance checked"
+}">
+
+</td>
+
+
+<td>
+
+<button
+class="danger delete-row"
+data-index="${index}">
+×
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+  });
 
 
   html += `
-    </tbody>
-  </table>
-  `;
+</tbody>
+</table>
+`;
 
 
-  container.innerHTML = html;
+  container.innerHTML =
+    html;
 
 
   /*
-    Attach editing handlers.
+    Editing
   */
 
   container
     .querySelectorAll(".cell")
-    .forEach(
-      input => {
+    .forEach(input=>{
 
-        input.addEventListener(
-          "change",
-          function () {
+      input.addEventListener(
+        "change",
+        function(){
 
-            const index =
-              Number(this.dataset.index);
+          const index =
+            Number(this.dataset.index);
 
-            const field =
-              this.dataset.field;
-
-
-            if (
-              field === "payment" ||
-              field === "receipt" ||
-              field === "balance"
-            ) {
-
-              state.rows[index][field] =
-                parseMoney(this.value);
-
-            } else {
-
-              state.rows[index][field] =
-                this.value;
-
-            }
+          const field =
+            this.dataset.field;
 
 
-            /*
-              Optional balance recalculation.
-            */
+          if(
+            field === "payment" ||
+            field === "receipt" ||
+            field === "balance"
+          ){
 
-            if (
-              $("recalculateBalance").checked
-            ) {
+            state.rows[index][field] =
+              parseMoney(this.value);
 
-              recalculateBalances();
+          }else{
 
-            }
-
-
-            renderTable();
+            state.rows[index][field] =
+              this.value;
 
           }
-        );
 
-      }
-    );
+
+          /*
+            If balance recalculation is enabled,
+            changing payment/receipt updates balances.
+          */
+
+          if(
+            $("recalculateBalance").checked &&
+            (
+              field === "payment" ||
+              field === "receipt"
+            )
+          ){
+
+            recalculateBalances();
+
+          }
+
+
+          validateBalances();
+
+          renderTable();
+
+        }
+      );
+
+    });
 
 
   /*
-    Delete handlers.
+    Delete
   */
 
   container
     .querySelectorAll(".delete-row")
-    .forEach(
-      button => {
+    .forEach(button=>{
 
-        button.addEventListener(
-          "click",
-          function () {
+      button.addEventListener(
+        "click",
+        function(){
 
-            const index =
-              Number(this.dataset.index);
+          const index =
+            Number(this.dataset.index);
 
+          state.rows.splice(
+            index,
+            1
+          );
 
-            state.rows.splice(index, 1);
+          validateBalances();
 
+          renderTable();
 
-            renderTable();
+        }
+      );
 
-          }
-        );
-
-      }
-    );
+    });
 
 
   updateStatistics();
@@ -1469,24 +1901,120 @@ function renderTable() {
 }
 
 
-/* =========================================================
-   STATISTICS
-========================================================= */
+/* ============================================================
+   BALANCE VALIDATION
+============================================================ */
 
-function calculateTotals() {
+function validateBalances(){
+
+  if(!state.rows.length){
+    return;
+  }
+
+
+  let previous =
+    Number(state.rows[0].balance) || 0;
+
+
+  /*
+    First row is treated as the available opening/current
+    reference balance.
+  */
+
+  state.rows[0].balanceValid =
+    true;
+
+
+  for(
+    let i=1;
+    i<state.rows.length;
+    i++
+  ){
+
+    const row =
+      state.rows[i];
+
+
+    const expected =
+      previous -
+      (Number(row.payment)||0) +
+      (Number(row.receipt)||0);
+
+
+    row.balanceValid =
+      Math.abs(
+        expected -
+        Number(row.balance||0)
+      ) <= 0.05;
+
+
+    previous =
+      Number(row.balance)||0;
+
+  }
+
+}
+
+
+/* ============================================================
+   RECALCULATE BALANCES
+============================================================ */
+
+function recalculateBalances(){
+
+  if(state.rows.length < 2){
+    return;
+  }
+
+
+  let balance =
+    Number(state.rows[0].balance)||0;
+
+
+  for(
+    let i=1;
+    i<state.rows.length;
+    i++
+  ){
+
+    const row =
+      state.rows[i];
+
+
+    balance =
+      balance -
+      (Number(row.payment)||0) +
+      (Number(row.receipt)||0);
+
+
+    row.balance =
+      balance;
+
+  }
+
+
+  validateBalances();
+
+}
+
+
+/* ============================================================
+   TOTALS
+============================================================ */
+
+function totals(){
 
   let payments = 0;
-
   let receipts = 0;
 
 
-  state.rows.forEach(row => {
+  state.rows.forEach(row=>{
 
     payments +=
-      Number(row.payment) || 0;
+      Number(row.payment)||0;
 
     receipts +=
-      Number(row.receipt) || 0;
+      Number(row.receipt)||0;
 
   });
 
@@ -1505,32 +2033,32 @@ function calculateTotals() {
 }
 
 
-function updateStatistics() {
+function updateStatistics(){
 
-  const totals =
-    calculateTotals();
+  const t =
+    totals();
 
 
   $("totalPayments").textContent =
-    formatMoney(totals.payments);
+    money(t.payments);
 
 
   $("totalReceipts").textContent =
-    formatMoney(totals.receipts);
+    money(t.receipts);
 
 
   $("netProfit").textContent =
-    formatMoney(totals.profit);
+    money(t.profit);
 
 
   const target =
-    Number($("profitTarget").value) || 0;
+    Number($("profitTarget").value)||0;
 
 
   $("netProfit").className =
     "stat-value " +
     (
-      totals.profit >= target
+      t.profit >= target
         ? "good"
         : "bad"
     );
@@ -1538,131 +2066,109 @@ function updateStatistics() {
 }
 
 
-/* =========================================================
-   BALANCE RECALCULATION
-========================================================= */
+/* ============================================================
+   ANALYSIS
+============================================================ */
 
-function recalculateBalances() {
+function showAnalysis(message,type){
 
-  if (!state.rows.length) {
-    return;
-  }
-
-
-  /*
-    Keep the first balance as the opening/reference
-    balance, then apply:
-
-    balance + receipt - payment
-  */
-
-  let currentBalance =
-    Number(state.rows[0].balance) || 0;
-
-
-  /*
-    Starting with row 2.
-  */
-
-  for (
-    let i = 1;
-    i < state.rows.length;
-    i++
-  ) {
-
-    currentBalance =
-      currentBalance +
-      (Number(state.rows[i].receipt) || 0) -
-      (Number(state.rows[i].payment) || 0);
-
-
-    state.rows[i].balance =
-      currentBalance;
-
-  }
-
-}
-
-
-/* =========================================================
-   PROFIT ANALYSIS
-========================================================= */
-
-function analyzeProfit() {
-
-  const totals =
-    calculateTotals();
-
-
-  const target =
-    Number($("profitTarget").value) || 0;
-
-
-  const result =
+  const box =
     $("analysisResult");
 
 
-  result.style.display =
+  box.style.display =
     "block";
 
 
-  if (totals.profit >= target) {
-
-    const excess =
-      totals.profit - target;
+  box.className =
+    "analysis " + type;
 
 
-    result.innerHTML =
-      `<strong>Target reached.</strong>
-       Net profit is ${formatMoney(totals.profit)}.
-       This is ${formatMoney(excess)}
-       above the selected minimum target.`;
+  box.innerHTML =
+    message;
 
-  } else {
-
-    const gap =
-      target - totals.profit;
+}
 
 
-    result.innerHTML =
-      `<strong>Target gap:</strong>
-       ${formatMoney(gap)}.
-       Current net profit is
-       ${formatMoney(totals.profit)}.
-       Review the underlying transactions and
-       make only documented corrections before exporting.`;
+function analyze(){
+
+  const t =
+    totals();
+
+
+  const target =
+    Number($("profitTarget").value)||0;
+
+
+  if(t.profit >= target){
+
+    showAnalysis(
+
+      `<strong>Minimum target reached.</strong>
+       Net profit is ${money(t.profit)}.
+       This is ${money(t.profit-target)}
+       above the selected target.`,
+
+      "success"
+
+    );
+
+  }else{
+
+    showAnalysis(
+
+      `<strong>Target not reached.</strong>
+       Current net profit is ${money(t.profit)}.
+       The difference from the selected target is
+       ${money(target-t.profit)}.
+       Review the underlying transactions and make only
+       legitimate, documented corrections.`,
+
+      "warning"
+
+    );
+
+  }
+
+
+  /*
+    Also report balance problems.
+  */
+
+  const invalid =
+    state.rows.filter(
+      r => r.balanceValid === false
+    ).length;
+
+
+  if(invalid){
+
+    showAnalysis(
+
+      `<strong>Balance review required.</strong>
+       ${invalid} row(s) do not mathematically reconcile
+       with the preceding balance.
+       Please inspect the affected rows before exporting.`,
+
+      "warning"
+
+    );
 
   }
 
 }
 
 
-/* =========================================================
-   DATE FORMAT CHANGE
-========================================================= */
+/* ============================================================
+   CHANGE DATE FORMAT
+============================================================ */
 
-function changeDateFormat() {
+function changeDateFormat(){
 
-  /*
-    Re-format all currently detected dates.
+  state.rows.forEach(row=>{
 
-    Since the original date information can sometimes
-    already be formatted, the function attempts to
-    recognize the current value again.
-  */
-
-  state.rows.forEach(row => {
-
-    const current =
-      row.date;
-
-
-    if (dateMatch(current)) {
-
-      row.date =
-        formatDate(current);
-
-    }
+    row.date =
+      formatDate(row.date);
 
   });
 
@@ -1672,43 +2178,94 @@ function changeDateFormat() {
 }
 
 
-/* =========================================================
-   XLSX CREATION
-========================================================= */
+/* ============================================================
+   CLEAR
+============================================================ */
+
+function clearAll(){
+
+  $("sourceText").value =
+    "";
+
+  state.rows =
+    [];
+
+  state.mode =
+    "";
+
+  $("analysisResult").style.display =
+    "none";
+
+  $("rowStatus").textContent =
+    "No transactions detected yet.";
+
+  renderTable();
+
+}
+
+
+/* ============================================================
+   XLSX EXPORT
+============================================================ */
 
 /*
-  This creates a genuine XLSX file directly in the browser.
+  A complete XLSX package is generated locally.
 
-  No server.
   No watermark.
-  No account.
+  No server upload.
+  No external service.
 */
 
-function uint8Concat(arrays) {
 
-  let total = 0;
+function u16(n){
+
+  return new Uint8Array([
+    n & 255,
+    (n >>> 8) & 255
+  ]);
+
+}
+
+
+function u32(n){
+
+  return new Uint8Array([
+    n & 255,
+    (n >>> 8) & 255,
+    (n >>> 16) & 255,
+    (n >>> 24) & 255
+  ]);
+
+}
+
+
+function concatArrays(arrays){
+
+  let length = 0;
 
   arrays.forEach(
-    array => total += array.length
+    a => length += a.length
   );
 
 
   const result =
-    new Uint8Array(total);
+    new Uint8Array(length);
 
 
   let offset = 0;
 
 
-  arrays.forEach(
-    array => {
+  arrays.forEach(a=>{
 
-      result.set(array, offset);
+    result.set(
+      a,
+      offset
+    );
 
-      offset += array.length;
+    offset +=
+      a.length;
 
-    }
-  );
+  });
 
 
   return result;
@@ -1716,67 +2273,35 @@ function uint8Concat(arrays) {
 }
 
 
-function uint16(value) {
+function crc32(bytes){
 
-  return new Uint8Array([
-
-    value & 255,
-
-    (value >>> 8) & 255
-
-  ]);
-
-}
+  let crc =
+    0xffffffff;
 
 
-function uint32(value) {
-
-  return new Uint8Array([
-
-    value & 255,
-
-    (value >>> 8) & 255,
-
-    (value >>> 16) & 255,
-
-    (value >>> 24) & 255
-
-  ]);
-
-}
-
-
-function crc32(bytes) {
-
-  let crc = 0xffffffff;
-
-
-  for (
-    let i = 0;
-    i < bytes.length;
+  for(
+    let i=0;
+    i<bytes.length;
     i++
-  ) {
+  ){
 
-    crc ^= bytes[i];
+    crc ^=
+      bytes[i];
 
 
-    for (
-      let j = 0;
-      j < 8;
+    for(
+      let j=0;
+      j<8;
       j++
-    ) {
+    ){
 
-      if (crc & 1) {
-
-        crc =
-          (crc >>> 1) ^
-          0xedb88320;
-
-      } else {
-
-        crc >>>= 1;
-
-      }
+      crc =
+        (crc >>> 1) ^
+        (
+          (crc & 1)
+          ? 0xedb88320
+          : 0
+        );
 
     }
 
@@ -1791,28 +2316,31 @@ function crc32(bytes) {
 }
 
 
-function createZip(files) {
+function zipFiles(files){
 
   const encoder =
     new TextEncoder();
 
 
-  const localParts = [];
-
-  const centralParts = [];
+  const local = [];
+  const central = [];
 
 
   let offset = 0;
 
 
-  files.forEach(file => {
+  files.forEach(file=>{
 
     const name =
-      encoder.encode(file.name);
+      encoder.encode(
+        file.name
+      );
 
 
     const data =
-      encoder.encode(file.content);
+      encoder.encode(
+        file.content
+      );
 
 
     const crc =
@@ -1820,7 +2348,7 @@ function createZip(files) {
 
 
     const localHeader =
-      uint8Concat([
+      concatArrays([
 
         new Uint8Array([
           0x50,0x4b,
@@ -1832,30 +2360,25 @@ function createZip(files) {
           0,0
         ]),
 
-        uint32(crc),
-
-        uint32(data.length),
-
-        uint32(data.length),
-
-        uint16(name.length),
-
-        uint16(0),
+        u32(crc),
+        u32(data.length),
+        u32(data.length),
+        u16(name.length),
+        u16(0),
 
         name,
-
         data
 
       ]);
 
 
-    localParts.push(
+    local.push(
       localHeader
     );
 
 
     const centralHeader =
-      uint8Concat([
+      concatArrays([
 
         new Uint8Array([
           0x50,0x4b,
@@ -1868,32 +2391,25 @@ function createZip(files) {
           0,0
         ]),
 
-        uint32(crc),
+        u32(crc),
+        u32(data.length),
+        u32(data.length),
 
-        uint32(data.length),
+        u16(name.length),
+        u16(0),
+        u16(0),
+        u16(0),
+        u16(0),
 
-        uint32(data.length),
-
-        uint16(name.length),
-
-        uint16(0),
-
-        uint16(0),
-
-        uint16(0),
-
-        uint16(0),
-
-        uint32(0),
-
-        uint32(offset),
+        u32(0),
+        u32(offset),
 
         name
 
       ]);
 
 
-    centralParts.push(
+    central.push(
       centralHeader
     );
 
@@ -1904,20 +2420,16 @@ function createZip(files) {
   });
 
 
-  const centralDirectory =
-    uint8Concat(
-      centralParts
-    );
-
-
   const localData =
-    uint8Concat(
-      localParts
-    );
+    concatArrays(local);
+
+
+  const centralData =
+    concatArrays(central);
 
 
   const end =
-    uint8Concat([
+    concatArrays([
 
       new Uint8Array([
         0x50,0x4b,
@@ -1926,86 +2438,74 @@ function createZip(files) {
         0,0
       ]),
 
-      uint16(files.length),
+      u16(files.length),
+      u16(files.length),
 
-      uint16(files.length),
+      u32(centralData.length),
+      u32(localData.length),
 
-      uint32(centralDirectory.length),
-
-      uint32(localData.length),
-
-      uint16(0)
+      u16(0)
 
     ]);
 
 
-  return new Blob(
-    [
-      uint8Concat([
-        localData,
-        centralDirectory,
-        end
-      ])
-    ],
-    {
-      type:
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    }
-  );
+  return concatArrays([
+    localData,
+    centralData,
+    end
+  ]);
 
 }
 
 
-function xmlEscape(value) {
+function xmlEscape(value){
 
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&apos;");
 
 }
 
 
-function xlsxCell(value) {
+function excelCell(value){
 
-  if (
+  if(
     typeof value === "number" &&
     Number.isFinite(value)
-  ) {
+  ){
 
     return `
-      <c t="n">
-        <v>${value}</v>
-      </c>
-    `;
+<c t="n">
+<v>${value}</v>
+</c>`;
 
   }
 
 
   return `
-    <c t="inlineStr">
-      <is>
-        <t>${xmlEscape(value ?? "")}</t>
-      </is>
-    </c>
-  `;
+<c t="inlineStr">
+<is>
+<t>${xmlEscape(value)}</t>
+</is>
+</c>`;
 
 }
 
 
-function createWorksheetXML() {
+function worksheetXML(){
 
-  const totals =
-    calculateTotals();
+  const t =
+    totals();
 
 
   const rows = [];
 
 
   /*
-    Header
+    Main header
   */
 
   rows.push([
@@ -2021,7 +2521,7 @@ function createWorksheetXML() {
     Transactions
   */
 
-  state.rows.forEach(row => {
+  state.rows.forEach(row=>{
 
     rows.push([
 
@@ -2029,11 +2529,11 @@ function createWorksheetXML() {
 
       row.description,
 
-      Number(row.payment) || 0,
+      Number(row.payment)||0,
 
-      Number(row.receipt) || 0,
+      Number(row.receipt)||0,
 
-      Number(row.balance) || 0
+      Number(row.balance)||0
 
     ]);
 
@@ -2041,10 +2541,10 @@ function createWorksheetXML() {
 
 
   /*
-    Optional totals
+    Totals section
   */
 
-  if ($("showTotals").checked) {
+  if($("showTotals").checked){
 
     rows.push([
       "",
@@ -2058,7 +2558,7 @@ function createWorksheetXML() {
     rows.push([
       "",
       "TOTAL PAYMENTS",
-      totals.payments,
+      t.payments,
       "",
       ""
     ]);
@@ -2068,7 +2568,7 @@ function createWorksheetXML() {
       "",
       "TOTAL RECEIPTS",
       "",
-      totals.receipts,
+      t.receipts,
       ""
     ]);
 
@@ -2077,40 +2577,34 @@ function createWorksheetXML() {
       "",
       "NET PROFIT",
       "",
-      totals.profit,
+      t.profit,
       ""
     ]);
 
   }
 
 
-  let xmlRows = "";
+  let body = "";
 
 
-  rows.forEach(
-    (row, index) => {
+  rows.forEach((row,index)=>{
 
-      const rowNumber =
-        index + 1;
-
-
-      xmlRows +=
-        `<row r="${rowNumber}">`;
+    body +=
+      `<row r="${index+1}">`;
 
 
-      row.forEach(value => {
+    row.forEach(value=>{
 
-        xmlRows +=
-          xlsxCell(value);
+      body +=
+        excelCell(value);
 
-      });
+    });
 
 
-      xmlRows +=
-        `</row>`;
+    body +=
+      "</row>";
 
-    }
-  );
+  });
 
 
   return `
@@ -2121,7 +2615,7 @@ xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 
 <sheetData>
 
-${xmlRows}
+${body}
 
 </sheetData>
 
@@ -2131,70 +2625,57 @@ ${xmlRows}
 }
 
 
-function downloadExcel() {
+function downloadExcel(){
 
-  if (!state.rows.length) {
+  if(!state.rows.length){
 
     alert(
-      "Please detect at least one transaction first."
+      "Detect transactions before downloading."
     );
 
     return;
+
   }
-
-
-  const worksheet =
-    createWorksheetXML();
 
 
   const files = [
 
-    {
-      name:
-        "[Content_Types].xml",
+{
 
-      content:
-`
+name:"[Content_Types].xml",
+
+content:`
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
-<Types
-xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
 
-<Default
-Extension="rels"
+<Default Extension="rels"
 ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
 
-<Default
-Extension="xml"
+<Default Extension="xml"
 ContentType="application/xml"/>
 
-<Override
-PartName="/xl/workbook.xml"
+<Override PartName="/xl/workbook.xml"
 ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
 
-<Override
-PartName="/xl/worksheets/sheet1.xml"
+<Override PartName="/xl/worksheets/sheet1.xml"
 ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
 
-<Override
-PartName="/xl/styles.xml"
+<Override PartName="/xl/styles.xml"
 ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
 
 </Types>
 `
-    },
+},
 
+{
 
-    {
-      name:
-        "_rels/.rels",
+name:"_rels/.rels",
 
-      content:
-`
+content:`
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
-<Relationships
-xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
 
 <Relationship
 Id="rId1"
@@ -2203,15 +2684,13 @@ Target="xl/workbook.xml"/>
 
 </Relationships>
 `
-    },
+},
 
+{
 
-    {
-      name:
-        "xl/workbook.xml",
+name:"xl/workbook.xml",
 
-      content:
-`
+content:`
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
 <workbook
@@ -2229,19 +2708,16 @@ r:id="rId1"/>
 
 </workbook>
 `
-    },
+},
 
+{
 
-    {
-      name:
-        "xl/_rels/workbook.xml.rels",
+name:"xl/_rels/workbook.xml.rels",
 
-      content:
-`
+content:`
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
-<Relationships
-xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
 
 <Relationship
 Id="rId1"
@@ -2255,28 +2731,22 @@ Target="styles.xml"/>
 
 </Relationships>
 `
-    },
+},
 
+{
 
-    {
-      name:
-        "xl/styles.xml",
+name:"xl/styles.xml",
 
-      content:
-`
+content:`
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
-<styleSheet
-xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 
 <fonts count="1">
 
 <font>
-
 <sz val="11"/>
-
 <name val="Calibri"/>
-
 </font>
 
 </fonts>
@@ -2284,15 +2754,11 @@ xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 <fills count="2">
 
 <fill>
-
 <patternFill patternType="none"/>
-
 </fill>
 
 <fill>
-
 <patternFill patternType="gray125"/>
-
 </fill>
 
 </fills>
@@ -2300,13 +2766,11 @@ xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 <borders count="1">
 
 <border>
-
 <left/>
 <right/>
 <top/>
 <bottom/>
 <diagonal/>
-
 </border>
 
 </borders>
@@ -2333,147 +2797,130 @@ borderId="0"/>
 
 </styleSheet>
 `
-    },
+},
 
+{
 
-    {
-      name:
-        "xl/worksheets/sheet1.xml",
+name:"xl/worksheets/sheet1.xml",
 
-      content:
-        worksheet
-    }
+content:
+worksheetXML()
+
+}
 
   ];
 
 
+  const zip =
+    zipFiles(files);
+
+
   const blob =
-    createZip(files);
+    new Blob(
+      [zip],
+      {
+        type:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      }
+    );
 
 
   const url =
     URL.createObjectURL(blob);
 
 
-  const link =
+  const a =
     document.createElement("a");
 
 
-  link.href = url;
+  a.href =
+    url;
 
-  link.download =
+
+  a.download =
     "Okapathana_Ledger.xlsx";
 
 
-  document.body.appendChild(link);
+  document.body.appendChild(a);
 
-  link.click();
+  a.click();
 
-  link.remove();
+  a.remove();
 
 
   setTimeout(
-    () => URL.revokeObjectURL(url),
+    ()=>URL.revokeObjectURL(url),
     1000
   );
 
 }
 
 
-/* =========================================================
-   CLEAR
-========================================================= */
+/* ============================================================
+   EVENTS
+============================================================ */
 
-function clearEverything() {
-
-  $("sourceText").value = "";
-
-  state.rows = [];
-
-  $("analysisResult").style.display =
-    "none";
-
-  $("rowStatus").textContent =
-    "No transactions detected yet.";
-
-  renderTable();
-
-}
+$("detectButton").addEventListener(
+  "click",
+  detectTransactions
+);
 
 
-/* =========================================================
-   EVENT LISTENERS
-========================================================= */
-
-$("detectButton")
-  .addEventListener(
-    "click",
-    detectTransactions
-  );
+$("sampleButton").addEventListener(
+  "click",
+  loadSample
+);
 
 
-$("sampleButton")
-  .addEventListener(
-    "click",
-    loadSample
-  );
+$("clearButton").addEventListener(
+  "click",
+  clearAll
+);
 
 
-$("clearButton")
-  .addEventListener(
-    "click",
-    clearEverything
-  );
+$("analyzeButton").addEventListener(
+  "click",
+  analyze
+);
 
 
-$("analyzeButton")
-  .addEventListener(
-    "click",
-    analyzeProfit
-  );
+$("downloadButton").addEventListener(
+  "click",
+  downloadExcel
+);
 
 
-$("downloadButton")
-  .addEventListener(
-    "click",
-    downloadExcel
-  );
+$("profitTarget").addEventListener(
+  "input",
+  updateStatistics
+);
 
 
-$("profitTarget")
-  .addEventListener(
-    "input",
-    updateStatistics
-  );
+$("dateFormat").addEventListener(
+  "change",
+  changeDateFormat
+);
 
 
-$("dateFormat")
-  .addEventListener(
-    "change",
-    changeDateFormat
-  );
+$("recalculateBalance").addEventListener(
+  "change",
+  function(){
 
+    if(this.checked){
 
-$("recalculateBalance")
-  .addEventListener(
-    "change",
-    function () {
+      recalculateBalances();
 
-      if (this.checked) {
-
-        recalculateBalances();
-
-        renderTable();
-
-      }
+      renderTable();
 
     }
-  );
+
+  }
+);
 
 
-/* =========================================================
-   INITIAL STATE
-========================================================= */
+/* ============================================================
+   START
+============================================================ */
 
 renderTable();
 
